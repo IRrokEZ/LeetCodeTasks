@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1714149259 source:d:\git\leetcodetasks\prefix\main.cpp
+	<vector>
+	<string>
+	<iostream>
+
