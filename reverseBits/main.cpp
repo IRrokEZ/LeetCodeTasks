@@ -131,6 +131,33 @@ class Solution {
         }
         return true;
     }
+// 217. Contains Duplicate
+    //first answer
+    bool containsDuplicate1(std::vector<int>& nums) {
+        std::set<int> num (nums.begin(), nums.end());
+        return (num.size() != nums.size());
+    }
+    // second answer - slower
+    bool containsDuplicate2(std::vector<int>& nums) {
+        std::map<int, int> num;
+        for (const int val : nums) {
+            ++ num[val];
+            if (num[val] > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // third answer - faster
+    bool containsDuplicate3(std::vector<int>& nums) {
+        std::sort(nums.begin(), nums.end());
+        for (size_t i = 0; i < nums.size() - 1; ++ i) {
+            if (nums[i] == nums[i + 1]) {
+                return true;
+            }
+        }
+        return false;
+    }
 };
 
 int main() {
