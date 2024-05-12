@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1715466552 source:d:\git\leetcodetasks\reversebits\main.cpp
+	<iostream>
+	<string>
+	<algorithm>
+
