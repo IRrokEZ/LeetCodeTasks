@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <bitset>
 
 struct ListNode {
     int val;
@@ -158,12 +159,168 @@ class Solution {
         }
         return false;
     }
+// 228 Summary Ranges
+    std::vector<std::string> summaryRanges(std::vector<int> &nums) {
+        if (nums.empty()) {
+            return {};
+        }
+        std::vector<std::string> result;
+        std::string wrk = "";
+        int64_t left, right;
+        for (size_t i = 0; i < nums.size(); ++ i) {
+            if (wrk.empty()) {
+                left = nums[i];
+                right = left;
+                wrk += std::to_string(left);
+                continue;
+            }
+            if ((nums[i] - right) == 1) {
+                ++right;
+                continue;
+            }
+            if ((nums[i] - right) > 1) {
+                if (right != left) {
+                    wrk += "->" + std::to_string(right);
+                }
+                result.push_back(wrk);
+                left = nums[i];
+                right = left;
+                wrk = std::to_string(left);
+            }
+        }
+        if (right != left) {
+            wrk += "->" + std::to_string(right);
+        }
+        result.push_back(wrk);
+        return result;
+    }
+// 231. Power of Two
+    bool isPowerOfTwo(int64_t n) {
+        if (n <= 0) {
+            return false;
+        }
+        std::string binary_number = std::bitset<32>(n).to_string();
+        return (std::count(binary_number.begin(), binary_number.end(), '1') == 1);
+    }
+    bool isPowerOfTwo2(int64_t n) {
+        if (n <= 0) {
+            return false;
+        }
+        return (std::bitset<32>(n).count() == 1);
+    }
+    bool isPowerOfTwo3(int64_t n) {
+        return (n > 0) && ((n & (n - 1)) == 0);
+    }
+// 242. Valid Anagram
+    // curr
+    bool isAnagram(const std::string &s, const std::string &t) {
+        if (s.size() != t.size()) {
+            return false;
+        }
+        std::vector<int> decomp (26, 0);
+        for (char c : s) {
+            ++ decomp[c - 'a'];
+        }
+        for (char c : t) {
+            -- decomp[c - 'a'];
+            if (decomp[c - 'a'] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    // general
+    bool isAnagram2(const std::string &s, const std::string &t) {
+        if (s.size() != t.size()) {
+            return false;
+        }
+        std::vector<int> decomp (256, 0);
+        for (char c : s) {
+            ++ decomp[int(c)];
+        }
+        for (char c : t) {
+            -- decomp[int(c)];
+            if (decomp[int(c)] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+// 70. Climbing Stairs
+    int climbStairs(int n) {
+        if ((n == 1) || (n == 2)) {
+            return n;
+        }
+        int prev = 1, curr = 2, tmp;
+        for (int i = 3; i <= n; ++ i) {
+            tmp = curr;
+            curr = prev + curr;
+            prev = tmp;
+        }
+        return curr;
+    }
+// 258. Add Digits
+    int addDigits(int num) {
+        int tmp = 0;
+        while (num > 9) {
+            tmp = num;
+            num = 0;
+            while (tmp > 0) {
+                num += tmp % 10;
+                tmp /= 10;
+            }
+        }
+        return num;
+    }
+    // fastest
+    int addDigits2(int num) {
+        if (num == 0) {
+            return 0;
+        }
+        if ((num % 9) == 0) {
+            return 9;
+        }
+        return num % 9;
+    }
+// 263. Ugly Number
+    bool isUgly(int n) {
+        if (n == 0) {
+            return false;
+        }
+        if (n == 1) {
+            return true;
+        }
+        while ((n % 2) == 0) {
+            n /= 2;
+        }
+        if (n == 1) {
+            return true;
+        }
+        while ((n % 3) == 0) {
+            n /= 3;
+        }
+        if (n == 1) {
+            return true;
+        }
+        while ((n % 5) == 0) {
+            n /= 5;
+        }
+        if (n == 1) {
+            return true;
+        }
+        return false;
+    }
+// 268. Missing Number
+    int missingNumber(const std::vector<int>& nums) {
+        int64_t TwoSumms = nums.size() * (nums.size() + 1) / 2;
+        for (int a : nums) {
+            TwoSumms -= a;
+        }
+        return TwoSumms;
+    }
 };
 
 int main() {
     Solution solution;
-    uint32_t test = 43261596;
-    uint32_t result = solution.reverseBits(test);
-    std::cout << test << std::endl << result << std::endl;
     return 0;
 }
