@@ -1,7 +1,0 @@
-# depslib dependency file v1.0
-1715636835 source:d:\git\leetcodetasks\basic_algos\main.cpp
-	<iostream>
-	<map>
-	<algorithm>
-	<limits>
-

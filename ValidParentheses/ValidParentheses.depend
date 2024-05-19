@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1714155431 source:d:\git\leetcodetasks\validparentheses\main.cpp
-	<iostream>
-	<string>
-	<map>
-	<set>
-	<deque>
-
