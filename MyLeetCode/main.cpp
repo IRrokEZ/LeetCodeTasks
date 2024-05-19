@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <bitset>
+#include <cmath>
 #include <deque>
 #include <iostream>
 #include <map>
@@ -16,22 +17,58 @@ struct ListNode {
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+// 303. Range Sum Query - Immutable
+class NumArray {
+private:
+    std::vector<int> values;
+    std::vector<int> sums;
+public:
+    NumArray(std::vector<int>& nums) {
+        values.resize(nums.size());
+        sums.resize(nums.size());
+        for (size_t i = 0; i < nums.size(); ++ i) {
+            values[i] = nums[i];
+            sums[i] = nums[i];
+            if (i != 0) {
+                sums[i] += sums[i - 1];
+            }
+        }
+    }
+
+    int sumRange(int left, int right) {
+        size_t l = left, r = right;
+        if (l == 0) {
+            return sums[r];
+        }
+        return (sums[r] - sums[l - 1]);
+    }
+};
+
 class Solution {
     public:
 // 1. Two Sum
-    std::vector<int> twoSum(std::vector<int> &nums, int target) {
+    std::vector<int> twoSum (std::vector<int> &nums, int target) {
         std::unordered_map <int, int> visited;
-        for (int i = 0; i < nums.size(); i ++) {
+        for (size_t i = 0; i < nums.size(); i ++) {
             int complement = target - nums[i];
             if (visited.count(complement)) {
-                return {visited[complement], i};
+                return {visited[complement], int(i)};
             }
-            visited[nums[i]] = i;
+            visited[nums[i]] = int(i);
         }
         return {};
     }
 // 9. Palindrome Number
-    bool isPalindrome(int x) {
+    bool isPalindrome (int x) {
         if (x < 0) {
             return false;
         }
@@ -44,7 +81,7 @@ class Solution {
         return x == rev_x;
     }
 // 13. Roman to Integer
-    int convertSymbToInt(char c) {
+    int convertSymbToInt (char c) {
         switch (c) {
             case 'I':
                 return 1;
@@ -63,9 +100,9 @@ class Solution {
         }
         return 0;
     }
-    int romanToInt(std::string s) {
+    int romanToInt (std::string s) {
         int rez = 0;
-        for (int i = 0; i < s.size(); i ++) {
+        for (size_t i = 0; i < s.size(); i ++) {
             int a = convertSymbToInt(s[i]);
             int b;
             if(i + 1 >= s.size()) {
@@ -83,7 +120,7 @@ class Solution {
         return rez;
     }
 // 14. Longest Common Prefix
-    std::string longestCommonPrefix(std::vector<std::string>& strs) {
+    std::string longestCommonPrefix (std::vector<std::string>& strs) {
         if (strs.size() == 1) {
             return strs[0];
         }
@@ -120,7 +157,7 @@ class Solution {
         return pref;
     }
 // 20. Valid Parentheses
-    bool isValid(std::string s) {
+    bool isValid (std::string s) {
         std::deque<char> brackets;
         std::map<char, char> brackets_pairs;
         brackets_pairs['}'] = '{';
@@ -128,9 +165,9 @@ class Solution {
         brackets_pairs[')'] = '(';
         std::set<char> open_brackets {'(', '[', '{'}, close_brackets {')', ']', '}'};
         for (size_t i = 0; i < s.size(); ++ i) {
-            if (open_brackets.contains(s[i])) {
+            if (open_brackets.find(s[i]) != open_brackets.end()) {
                 brackets.push_back(s[i]);
-            } else if (close_brackets.contains(s[i])) {
+            } else if (close_brackets.find(s[i]) != close_brackets.end()) {
                 if (brackets.empty() || (brackets.back() != brackets_pairs[s[i]])) {
                     return false;
                 } else {
@@ -141,7 +178,7 @@ class Solution {
         return brackets.empty();
     }
 // 21. Merge Two Sorted Lists
-    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+    ListNode* mergeTwoLists (ListNode* list1, ListNode* list2) {
         if (list1 == nullptr) {
             return list2;
         }
@@ -182,7 +219,7 @@ class Solution {
         return result;
     }
 // 26. Remove Duplicates from Sorted Array
-    int removeDuplicates(std::vector<int>& nums) {
+    int removeDuplicates (std::vector<int>& nums) {
         if (nums.empty()) {
             return 0;
         }
@@ -199,7 +236,7 @@ class Solution {
         return k;
     }
 // 27. Remove Element
-    int removeElement(std::vector<int>& nums, int val) {
+    int removeElement (std::vector<int>& nums, int val) {
         std::vector<int> cpy(nums.size());
         size_t j = 0;
         for (size_t i = 0; i < nums.size(); ++ i) {
@@ -212,7 +249,7 @@ class Solution {
         return j;
     }
 // 28. Find the Index of the First Occurrence in a String
-    int strStr(std::string haystack, std::string needle) {
+    int strStr (std::string haystack, std::string needle) {
         if (needle.size() > haystack.size()) {
             return -1;
         }
@@ -234,7 +271,7 @@ class Solution {
         return result;
     }
 // 35. Search Insert Position
-    int searchInsert(std::vector<int>& nums, int target) {
+    int searchInsert (std::vector<int>& nums, int target) {
         size_t sz = nums.size();
         size_t beg = 0, mid = sz / 2, last = sz - 1;
         if (target <= nums[0]) {
@@ -259,8 +296,342 @@ class Solution {
         }
         return (last + 1);
     }
+// 58. Length of Last Word
+    int lengthOfLastWord (std::string s) {
+        int lett_counter = 0, save_value = 0;
+        for (size_t i = 0; i < s.size(); ++ i) {
+            if (s[i] == ' ') {
+                if (lett_counter != 0) {
+                    save_value = lett_counter;
+                }
+                lett_counter = 0;
+                continue;
+            }
+            ++ lett_counter;
+        }
+        if (lett_counter == 0) {
+            if (save_value != 0) {
+                return save_value;
+            }
+        }
+        return lett_counter;
+    }
+// 66. Plus One
+    std::vector<int> plusOne (std::vector<int>& digits) {
+        std::vector<int> newNum((digits.size() + 1));
+        int div = 0, mod = -1, r;
+        for (size_t i = digits.size(); i > 0; -- i) {
+            r = div + digits[i - 1] + ((mod == -1) ? 1 : 0);
+            mod = r % 10;
+            newNum[i] = mod;
+            div = r / 10;
+        }
+        if (div != 0) {
+            newNum[0] = div;
+        } else {
+            newNum.erase(newNum.begin());
+        }
+        return newNum;
+    }
+// 67. Add Binary
+    int BinaryCharToInt (char sym) {
+        return (sym == '1')? 1 : 0;
+    }
+    char BinaryIntToChar (int num) {
+        return (num == 1)? '1' : '0';
+    }
+    std::string addBinary (std::string a, std::string b) {
+        std::string max_num, min_num;
+        size_t max_sz, min_sz;
+        if (a.size() > b.size()) {
+            max_num = a;
+            max_sz = a.size();
+            min_num = b;
+            min_sz = b.size();
+        } else {
+            min_num = a;
+            min_sz = a.size();
+            max_num = b;
+            max_sz = b.size();
+        }
+        int div = 0, mod = -1, r;
+        std::string res;
+        res.insert(res.begin(), max_sz + 1, '0');
+        for (size_t i = 1; i <= max_sz; ++ i) {
+            if (min_sz >= i) {
+                r = BinaryCharToInt(min_num[min_sz - i]) +
+                    BinaryCharToInt(max_num[max_sz - i]) +
+                    div;
+            } else {
+                r = BinaryCharToInt(max_num[max_sz - i]) +
+                    div;
+            }
+            div = r / 2;
+            mod = r % 2;
+            res[max_sz + 1 - i] = BinaryIntToChar(mod);
+        }
+        if (div == 1) {
+            res[0] = BinaryIntToChar(div);
+        } else {
+            res.erase(res.begin());
+        }
+        return res;
+    }
+// 69. Sqrt(x)
+    int mySqrt (int x) {
+        if (x < 2) {
+            return x;
+        }
+        int64_t left = 0, right = x;
+        int64_t mid;
+        for ( ; left < right; ) {
+            mid = (left + right + 1) / 2;
+
+            if (mid * mid <= x) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+// 70. Climbing Stairs
+    int climbStairs (int n) {
+        if ((n == 1) || (n == 2)) {
+            return n;
+        }
+        int prev = 1, curr = 2, tmp;
+        for (int i = 3; i <= n; ++ i) {
+            tmp = curr;
+            curr = prev + curr;
+            prev = tmp;
+        }
+        return curr;
+    }
+// 83. Remove Duplicates from Sorted List
+    ListNode* deleteDuplicates (ListNode* head) {
+        if ((head == nullptr) || (head->next == nullptr)){
+            return head;
+        }
+        ListNode* wrk = head;
+        while (wrk->next != nullptr) {
+            if (wrk->val == wrk->next->val) {
+                ListNode* del = wrk->next;
+                wrk->next = wrk->next->next;
+                delete (del);
+            } else {
+                wrk = wrk->next;
+            }
+        }
+        return head;
+    }
+// 88. Merge Sorted Array
+    void MergeArrays (std::vector<int>& nums1, int m, std::vector<int>& nums2, int n) {
+        if (n == 0){
+            return void();
+        }
+        if (m == 0) {
+            for (int i = 0; i < n; i ++) {
+                nums1[i] = nums2[i];
+            }
+            return void();
+        }
+        std::vector<int> result(m + n);
+        size_t num1_ptr = 0, num2_ptr = 0;
+        for (size_t i = 0; i < size_t(m + n); ++ i) {
+            if (num1_ptr == size_t(m)) {
+                result[i] = nums2[num2_ptr];
+                ++ num2_ptr;
+                continue;
+            }
+            if (num2_ptr == size_t(n)) {
+                result[i] = nums1[num1_ptr];
+                ++ num1_ptr;
+                continue;
+            }
+            if (nums1[num1_ptr] < nums2[num2_ptr]){
+                result[i] = nums1[num1_ptr];
+                ++ num1_ptr;
+            } else {
+                result[i] = nums2[num2_ptr];
+                ++ num2_ptr;
+            }
+        }
+        for (size_t i = 0; i < size_t(m + n); ++ i) {
+            nums1[i] = result[i];
+        }
+        result.clear();
+    }
+// 100. Same Tree
+    bool isSameTree (TreeNode* p, TreeNode* q) {
+        if((p == nullptr) && (q == nullptr)) {
+            return true;
+        }
+
+        if ((p == nullptr) || (q == nullptr)) {
+            return false;
+        }
+
+        if ((p->left == nullptr) && (q->left == nullptr)
+            && (p->right == nullptr) && (q->right == nullptr)) {
+            return (p->val == q->val);
+        }
+
+        return (p->val == q->val) && isSameTree(p->left, q->left) &&
+            isSameTree(p->right, q->right);
+    }
+// 101. Symmetric Tree
+    bool checkSymmetric (TreeNode *lft, TreeNode *rght) {
+        if ((lft == nullptr) && (rght == nullptr)) {
+            return true;
+        }
+        if ((lft == nullptr) || (rght == nullptr)) {
+            return false;
+        }
+        bool result = lft->val == rght->val
+                && checkSymmetric(lft->left, rght->right)
+                && checkSymmetric(lft->right, rght->left);
+        return result;
+    }
+    bool isSymmetric (TreeNode* root) {
+        if (root == nullptr) {
+            return true;
+        }
+        if ((root->left == nullptr) && (root->right == nullptr)) {
+            return true;
+        }
+        return checkSymmetric(root->left, root->right);
+    }
+// 104. Maximum Depth of Binary Tree
+    int maxDepth (TreeNode* root) {
+        if (root == nullptr) {
+            return 0;
+        }
+        return 1 + std::max(maxDepth(root->left), maxDepth(root->right));
+    }
+// 118. Pascal's Triangle
+    std::vector<std::vector<int>> generate (int numRows) {
+        if (numRows == 1) {
+            return {{1}};
+        }
+        if (numRows == 2) {
+            return {{1}, {1, 1}};
+        }
+        std::vector<std::vector<int>> result = {{1}, {1, 1}};
+        for (int i = 2; i < numRows; ++ i) {
+            std::vector<int> str(i + 1);
+            str[0] = 1;
+            str[i] = 1;
+            for (int j = 1; j < i; ++ j) {
+                str[j] = result[i - 1][j - 1] + result[i - 1][j];
+            }
+            result.push_back(str);
+        }
+        return result;
+    }
+// 119. Pascal's Triangle II
+    std::vector<int> getRow (int rowIndex) {
+        if (rowIndex == 0) {
+            return {1};
+        }
+        if (rowIndex == 1) {
+            return {1, 1};
+        }
+        std::vector<int> prev_row = {1, 1};
+        std::vector<int> curr_row;
+        for (int i = 2; i <= rowIndex; ++ i) {
+            curr_row.resize(i + 1);
+            curr_row[0] = 1;
+            curr_row[i] = 1;
+            for (int j = 1; j < i; ++ j) {
+                curr_row[j] = prev_row[j - 1] + prev_row[j];
+            }
+            prev_row = curr_row;
+        }
+        return curr_row;
+    }
+// 121. Best Time to Buy and Sell Stock
+    int maxProfit (std::vector<int>& prices) {
+        int buy = prices[0];
+        int profit = 0;
+        for (size_t i = 1; i < prices.size(); ++ i) {
+            if (prices[i] < buy) {
+                buy = prices[i];
+            } else if ((prices[i] - buy) > profit) {
+                profit = prices[i] - buy;
+            }
+        }
+        return profit;
+    }
+// 125. Valid Palindrome
+    bool isPalindrome (std::string &s) {
+        std::string to_check = "";
+        for (char c : s) {
+            char sym = tolower(c);
+            if (((sym >= 'a') && (sym <= 'z')) || ((sym >= '0') && (sym <= '9'))) {
+                to_check += sym;
+                continue;
+            }
+        }
+        size_t str_size = to_check.size();
+        for (size_t i = 0; i < str_size / 2; ++ i) {
+            if (to_check[i] != to_check[str_size - 1 - i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+// 136. Single Number
+    int singleNumber(std::vector<int>& nums) {
+        int result = nums[0];
+        for (size_t i = 1; i < nums.size(); ++ i) {
+            result = result xor nums[i];
+        }
+        return result;
+    }
+// 168. Excel Sheet Column Title
+    std::string convertToTitle(int columnNumber) {
+        std::string result;
+        while (columnNumber > 0) {
+            -- columnNumber;
+            char c = 'A' + columnNumber % 26;
+            result = c + result;
+            columnNumber /= 26;
+        }
+        return result;
+    }
+// 169. Majority Element
+    int majorityElement(std::vector<int>& nums) {
+        int max_id = 0, max = 0;
+        std::map<int, int> cntr;
+        for (int i : nums) {
+            ++ cntr[i];
+            if (cntr[i] > max) {
+                ++ max;
+                max_id = i;
+                if (max > int(nums.size()) / 2) {
+                    return max_id;
+                }
+            }
+        }
+        return max_id;
+    }
+// 171. Excel Sheet Column Number
+    int titleToNumber(std::string columnTitle) {
+        long int result = 0, multer = 1;
+        std::reverse(columnTitle.begin(), columnTitle.end());
+        for (const char c : columnTitle) {
+            if (c == 'A') {
+                result += 1 * multer;
+            } else {
+                result += int(c - 'A' + 1) * multer;
+            }
+            multer *= 26;
+        }
+        return result;
+    }
 // 190. Reverse Bits
-    uint32_t reverseBits(uint32_t n) {
+    uint32_t reverseBits (uint32_t n) {
         std::string str = "";
         while (n > 0) {
             str += (((n % 2) == 1)? "1":"0");
@@ -278,7 +649,7 @@ class Solution {
         return result;
     }
 // 191. Number of 1 Bits
-    int hammingWeight(int n) {
+    int hammingWeight (int n) {
         int result = 0;
         while (n > 0) {
             if ((n % 2) == 1) {
@@ -289,7 +660,7 @@ class Solution {
         return result;
     }
 // 202. Happy Number
-    bool isHappy(int64_t n) {
+    bool isHappy (int64_t n) {
         std::set <int64_t> square_sums;
         int64_t wrk = n, sum;
         bool is_happy = false;
@@ -313,7 +684,7 @@ class Solution {
         return true;
     }
 // 203. Remove Linked List Elements
-    ListNode* removeElements(ListNode* head, int value) {
+    ListNode* removeElements (ListNode* head, int value) {
         if (head == nullptr) {
             return nullptr;
         }
@@ -346,7 +717,7 @@ class Solution {
         return save;
     }
 // 205. Isomorphic Strings
-    bool isIsomorphic(std::string s, std::string t) {
+    bool isIsomorphic (std::string s, std::string t) {
         std::set<char> ss(s.begin(), s.end()), tt(t.begin(), t.end());
         if (ss.size() != tt.size()) {
             return false;
@@ -377,12 +748,12 @@ class Solution {
     }
 // 217. Contains Duplicate
     //first answer
-    bool containsDuplicate1(std::vector<int>& nums) {
+    bool containsDuplicate1 (std::vector<int>& nums) {
         std::set<int> num (nums.begin(), nums.end());
         return (num.size() != nums.size());
     }
     // second answer - slower
-    bool containsDuplicate2(std::vector<int>& nums) {
+    bool containsDuplicate2 (std::vector<int>& nums) {
         std::map<int, int> num;
         for (const int val : nums) {
             ++ num[val];
@@ -393,7 +764,7 @@ class Solution {
         return false;
     }
     // third answer - faster
-    bool containsDuplicate3(std::vector<int>& nums) {
+    bool containsDuplicate3 (std::vector<int>& nums) {
         std::sort(nums.begin(), nums.end());
         for (size_t i = 0; i < nums.size() - 1; ++ i) {
             if (nums[i] == nums[i + 1]) {
@@ -403,7 +774,7 @@ class Solution {
         return false;
     }
 // 228 Summary Ranges
-    std::vector<std::string> summaryRanges(std::vector<int> &nums) {
+    std::vector<std::string> summaryRanges (std::vector<int> &nums) {
         if (nums.empty()) {
             return {};
         }
@@ -438,25 +809,25 @@ class Solution {
         return result;
     }
 // 231. Power of Two
-    bool isPowerOfTwo(int64_t n) {
+    bool isPowerOfTwo (int64_t n) {
         if (n <= 0) {
             return false;
         }
         std::string binary_number = std::bitset<32>(n).to_string();
         return (std::count(binary_number.begin(), binary_number.end(), '1') == 1);
     }
-    bool isPowerOfTwo2(int64_t n) {
+    bool isPowerOfTwo2 (int64_t n) {
         if (n <= 0) {
             return false;
         }
         return (std::bitset<32>(n).count() == 1);
     }
-    bool isPowerOfTwo3(int64_t n) {
+    bool isPowerOfTwo3 (int64_t n) {
         return (n > 0) && ((n & (n - 1)) == 0);
     }
 // 242. Valid Anagram
     // curr
-    bool isAnagram(const std::string &s, const std::string &t) {
+    bool isAnagram (const std::string &s, const std::string &t) {
         if (s.size() != t.size()) {
             return false;
         }
@@ -473,7 +844,7 @@ class Solution {
         return true;
     }
     // general
-    bool isAnagram2(const std::string &s, const std::string &t) {
+    bool isAnagram2 (const std::string &s, const std::string &t) {
         if (s.size() != t.size()) {
             return false;
         }
@@ -489,21 +860,8 @@ class Solution {
         }
         return true;
     }
-// 70. Climbing Stairs
-    int climbStairs(int n) {
-        if ((n == 1) || (n == 2)) {
-            return n;
-        }
-        int prev = 1, curr = 2, tmp;
-        for (int i = 3; i <= n; ++ i) {
-            tmp = curr;
-            curr = prev + curr;
-            prev = tmp;
-        }
-        return curr;
-    }
 // 258. Add Digits
-    int addDigits(int num) {
+    int addDigits (int num) {
         int tmp = 0;
         while (num > 9) {
             tmp = num;
@@ -516,7 +874,7 @@ class Solution {
         return num;
     }
     // fastest
-    int addDigits2(int num) {
+    int addDigits2 (int num) {
         if (num == 0) {
             return 0;
         }
@@ -526,7 +884,7 @@ class Solution {
         return num % 9;
     }
 // 263. Ugly Number
-    bool isUgly(int n) {
+    bool isUgly (int n) {
         if (n == 0) {
             return false;
         }
@@ -554,7 +912,7 @@ class Solution {
         return false;
     }
 // 268. Missing Number
-    int missingNumber(const std::vector<int>& nums) {
+    int missingNumber (const std::vector<int>& nums) {
         int64_t TwoSumms = nums.size() * (nums.size() + 1) / 2;
         for (int a : nums) {
             TwoSumms -= a;
@@ -562,11 +920,12 @@ class Solution {
         return TwoSumms;
     }
 // 278. First Bad Version
-    bool isBadVersion(int q) {
+    // stub
+    bool isBadVersion (int q) {
         return true;
     }
     // my
-    int firstBadVersion(int n) {
+    int firstBadVersion (int n) {
         if (n == 1) {
             return 1;
         }
@@ -586,7 +945,7 @@ class Solution {
         return last;
     }
     // faster
-    int firstBadVersion2(int n) {
+    int firstBadVersion2 (int n) {
         int start = 1, end = n;
         while(start < end){
             int mid = start + (end - start) / 2;
@@ -600,7 +959,7 @@ class Solution {
         return start;
     }
 // 283. Move Zeroes
-    void moveZeroes(std::vector<int>& nums) {
+    void moveZeroes (std::vector<int>& nums) {
         int zero_count = 0;
         for (size_t i = 0; i < nums.size(); ++ i) {
             if (nums[i] == 0) {
@@ -619,7 +978,7 @@ class Solution {
         }
     }
 // 290. Word Pattern
-    bool wordPattern(std::string pattern, std::string s) {
+    bool wordPattern (std::string pattern, std::string s) {
         std::vector<std::string> words;
         std::string word, wrk = s;
         size_t pos = 0;
@@ -658,6 +1017,21 @@ class Solution {
         check_letters.clear();
         check_words.clear();
         return true;
+    }
+// 292. Nim Game
+    bool canWinNim(int n) {
+        if ((n % 4) == 0) {
+            return false;
+        }
+        return true;
+    }
+// 326. Power of Three
+    bool isPowerOfThree(int n) {
+        if (n < 1) {
+            return false;
+        }
+        double log_value = log10(n) / log10(3);
+        return log_value == int(log_value);
     }
 };
 
