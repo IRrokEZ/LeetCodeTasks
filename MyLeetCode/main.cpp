@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 struct ListNode {
     int val;
@@ -1032,6 +1033,130 @@ class Solution {
         }
         double log_value = log10(n) / log10(3);
         return log_value == int(log_value);
+    }
+// 342. Power of Four
+    bool isPowerOfFour(int n) {
+        if (n < 1) {
+            return false;
+        }
+        double log_value = log10(n) / log10(4);
+        return log_value == int(log_value);
+    }
+// 344. Reverse String
+    void reverseString(std::vector<char>& s) {
+        size_t ssize = s.size();
+        for (size_t i = 0; i < ssize / 2; ++ i) {
+            char save = s[i];
+            s[i] = s[ssize - 1 - i];
+            s[ssize - 1 - i] = save;
+        }
+    }
+    // slower
+    void reverseString2(std::vector<char>& s) {
+        std::reverse(s.begin(), s.end());
+    }
+// 345. Reverse Vowels of a String
+    std::string reverseVowels(std::string s) {
+        if (s.empty()) {
+            return s;
+        }
+        std::set<char> vowels = {'A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u'};
+        size_t begin = 0, end = s.size() - 1;
+        for (/**/; begin < end; /**/) {
+            if ((vowels.find(s[begin]) != vowels.end())
+                && (vowels.find(s[end]) != vowels.end())) {
+                char save = s[begin];
+                s[begin] = s[end];
+                s[end] = save;
+                ++ begin;
+                -- end;
+                continue;
+            }
+            if (vowels.find(s[begin]) != vowels.end()) {
+                -- end;
+                continue;
+            }
+            if (vowels.find(s[end]) != vowels.end()) {
+                ++ begin;
+                continue;
+            }
+            -- end;
+            ++ begin;
+        }
+        return s;
+    }
+// 349. Intersection of Two Arrays
+    std::vector<int> intersection(std::vector<int>& nums1, std::vector<int>& nums2) {
+        std::unordered_map<int, int> inter;
+        for (const int el : nums1) {
+            inter[el] = -1;
+        }
+        for (const int el : nums2) {
+            if (inter.find(el) != inter.end()) {
+                inter[el] = 1;
+            }
+        }
+        std::vector<int> answer;
+        for (const auto [key, value] : inter) {
+            if (value == 1) {
+                answer.push_back(key);
+            }
+        }
+        return answer;
+    }
+    // faster
+    std::vector<int> intersection2(std::vector<int>& nums1, std::vector<int>& nums2) {
+        std::unordered_set<int> set1(nums1.begin(), nums1.end()), resultSet;
+
+		for(int num : nums2){
+			if(set1.find(num) != set1.end()){
+				resultSet.insert(num);
+			}
+		}
+
+		return std::vector<int>(resultSet.begin(), resultSet.end());
+    }
+// 350. Intersection of Two Arrays II
+    std::vector<int> intersect(std::vector<int>& nums1, std::vector<int>& nums2) {
+        std::unordered_map<int, int> inter;
+        for (const int el : nums1) {
+            if (inter.find(el) != inter.end()) {
+                -- inter[el];
+                continue;
+            }
+            inter[el] = -1;
+        }
+        std::vector<int> answer;
+        for (const int el : nums2) {
+            if (inter.find(el) != inter.end()) {
+                if (inter[el] <= -1) {
+                    answer.push_back(el);
+                    ++ inter[el];
+                    continue;
+                }
+            }
+        }
+        return answer;
+    }
+    // faster
+    std::vector<int> intersect2(std::vector<int>& nums1, std::vector<int>& nums2) {
+        std::unordered_map<int, int> inter;
+        for (const int el : nums1) {
+            -- inter[el];
+        }
+        std::vector<int> answer;
+        for (const int el : nums2) {
+            if (inter[el] <= -1) {
+                answer.push_back(el);
+                ++ inter[el];
+            }
+        }
+        return answer;
+    }
+// 367. Valid Perfect Square
+    bool isPerfectSquare(int num) {
+        int my_sqrt = mySqrt(num);
+        return num == my_sqrt * my_sqrt;
     }
 };
 
