@@ -1232,6 +1232,25 @@ class Solution {
         }
         return -1;
     }
+// 389. Find the Difference
+    char findTheDifference(std::string s, std::string t) {
+        if (s.empty()) {
+            return t[0];
+        }
+        std::vector<int> letter_counter (26, 0);
+        for (const char c : t) {
+            ++ letter_counter[c - 'a'];
+        }
+        for (const char c : s) {
+            -- letter_counter[c - 'a'];
+        }
+        for (size_t i = 0; i < 26; ++ i) {
+            if (letter_counter[i] == 1) {
+                return ('a' + i);
+            }
+        }
+        return '!';
+    }
 };
 
 int main() {
