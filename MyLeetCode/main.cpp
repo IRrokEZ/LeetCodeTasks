@@ -1158,6 +1158,61 @@ class Solution {
         int my_sqrt = mySqrt(num);
         return num == my_sqrt * my_sqrt;
     }
+// 374. Guess Number Higher or Lower
+    // stub
+    int guess (int n) {
+        return n % 2;
+    }
+    // answer
+    int guessNumber(int n) {
+        int64_t left = 1, right = n, mid = 0;
+        for (/**/; left <= right; /**/) {
+            mid = (left + right) / 2;
+            int r = guess(mid);
+            if (r == 0) {
+                return mid;
+            }
+            if (r == 1) {
+                left = mid + 1;
+                continue;
+            }
+            if (r == -1) {
+                right = mid - 1;
+            }
+        }
+        return mid;
+    }
+// 383. Ransom Note
+    //slow
+    bool canConstruct(std::string ransomNote, std::string magazine) {
+        std::unordered_map<char, int> magazine_decomposition;
+        for (const char c : magazine) {
+            ++ magazine_decomposition[c];
+        }
+        for (const char c : ransomNote) {
+            -- magazine_decomposition[c];
+            if (magazine_decomposition[c] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    // faster
+    bool canConstruct2(std::string ransomNote, std::string magazine) {
+        std::vector<int> magazine_decomposition (26, 0);
+        for (const char c : magazine) {
+            ++ magazine_decomposition[c - 'a'];
+        }
+        for (const char c : ransomNote) {
+            -- magazine_decomposition[c - 'a'];
+        }
+        for (const int i : magazine_decomposition) {
+            if (i < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
 int main() {

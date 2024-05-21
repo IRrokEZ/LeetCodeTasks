@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1716195222 source:d:\git\leetcodetasks\myleetcode\main.cpp
+	<algorithm>
+	<bitset>
+	<cmath>
+	<deque>
+	<iostream>
+	<map>
+	<set>
+	<string>
+	<vector>
+	<unordered_map>
+	<unordered_set>
+
