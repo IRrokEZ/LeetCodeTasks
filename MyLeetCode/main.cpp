@@ -1213,6 +1213,25 @@ class Solution {
         }
         return true;
     }
+// 387. First Unique Character in a String
+    int firstUniqChar(std::string s) {
+        std::map<char, int> s_decomp; // letter + id
+        std::map<int, int> s_counter; // id + counter
+        for (size_t i = 0; i < s.size(); ++ i) {
+            if (s_decomp.find(s[i]) == s_decomp.end()) {
+                s_decomp[s[i]] = i;
+                ++ s_counter[i];
+                continue;
+            }
+            ++ s_counter[s_decomp[s[i]]];
+        }
+        for (const auto &el : s_counter) {
+            if (el.second == 1) {
+                return el.first;
+            }
+        }
+        return -1;
+    }
 };
 
 int main() {
