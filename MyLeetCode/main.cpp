@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <bitset>
 #include <cmath>
+#include <cstdint>
 #include <deque>
 #include <iostream>
 #include <map>
@@ -1251,9 +1252,64 @@ class Solution {
         }
         return '!';
     }
+// 392. Is Subsequence
+    bool isSubsequence(std::string &s, std::string &t) {
+        if (s.empty()) {
+            return true;
+        }
+        if (s.size() > t.size()) {
+            return false;
+        }
+        size_t next = 0, t_size = t.size(), s_size = s.size();
+        for (size_t i = 0; (i < t_size) && (next < s_size); ++ i) {
+            if (s[next] == t[i]) {
+                ++ next;
+            }
+        }
+        return next == s_size;
+    }
+// 404. Sum of Left Leaves
+    int MySumOfLeftLeaves (TreeNode* root, bool from_left) {
+        if (root == nullptr) {
+            return 0;
+        }
+        if ((root->left == nullptr) && (root->right == nullptr)) {
+            if (from_left) {
+                return root->val;
+            }
+            return 0;
+        }
+        int left_subtree_summ = MySumOfLeftLeaves(root->left, true);
+        int right_subtree_summ = MySumOfLeftLeaves(root->right, false);
+        return left_subtree_summ + right_subtree_summ;
+    }
+
+    int sumOfLeftLeaves (TreeNode* root) {
+        return 0 + MySumOfLeftLeaves(root->left, true) + MySumOfLeftLeaves(root->right, false);
+    }
+// 405. Convert a Number to Hexadecimal
+    std::string toHex(int num) {
+        if (num == 0) {
+            return "0";
+        }
+        uint32_t val = 0;
+        std::string result;
+        val += num;
+        for (/**/; val > 0; val /= 16) {
+            uint8_t mod = val % 16;
+            if (mod < 10) {
+                result += std::to_string(mod);
+                continue;
+            }
+            result += ('a' + mod - 10);
+        }
+        std::reverse(result.begin(), result.end());
+        return result;
+    }
 };
 
 int main() {
     Solution solution;
+    std::cout << solution.toHex(-15) << std::endl;
     return 0;
 }
