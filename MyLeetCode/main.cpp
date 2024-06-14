@@ -1306,10 +1306,131 @@ class Solution {
         std::reverse(result.begin(), result.end());
         return result;
     }
+// 338. Counting Bits
+    // slow O(n)
+    std::vector<int> countBits1(int n) {
+        std::vector<int> result(static_cast<int64_t>(n + 1), 0);
+        for (unsigned long int i = 0; i <= n; ++ i) {
+            for (unsigned long int wrk = 131072; wrk > 0; wrk = wrk >> 1) {
+                if ((i & wrk) == wrk) {
+                    ++ result[i];
+                }
+            }
+        }
+        return result;
+    }
+    // fast O(n)
+    std::vector<int> countBits(int n) {
+        std::vector<int> result(n + 1);
+        for (int i = 1; i <= n; ++ i) {
+            result[i] = result[i / 2] + (i & 1);
+        }
+        return result;
+    }
+// 409. Longest Palindrome
+    int longestPalindrome(std::string s) {
+        if (s.empty()) {
+            return 0;
+        }
+        std::vector<int> letters(255);
+        for (const char c : s) {
+            ++ letters[c];
+        }
+        int result = 0;
+        bool check_unique_letter = true;
+        for (const int el : letters) {
+            if (el == 0) {
+                continue;
+            }
+            if (check_unique_letter) {
+                if ((el % 2) == 1) {
+                    result += el;
+                    check_unique_letter = false;
+                    continue;
+                }
+            }
+            result += el - (((el % 2) == 1) ? 1 : 0);
+        }
+        return result;
+    }
+// 412. Fizz Buzz 
+    std::vector<std::string> fizzBuzz(int n) {
+        std::vector<std::string> result(n);
+        for (int i = 1; i <= n; ++ i) {
+            if (((i % 3) == 0) && ((i % 5) == 0)) {
+                result[i - 1] = "FizzBuzz";
+                continue;
+            }
+            if ((i % 3) == 0) {
+                result[i - 1] = "Fizz";
+                continue;
+            }
+            if ((i % 5) == 0) {
+                result[i - 1] = "Buzz";
+                continue;
+            }
+            result[i - 1] = std::to_string(i);
+        }
+        return result;
+    }
+// 414. Third Maximum Number
+    int thirdMax(std::vector<int>& nums) {
+        bool found_1 = true, found_2 = false, found_3 = false;
+        int max_1 = nums[0], max_2, max_3;
+        if (nums.size() == 1) {
+            return max_1;
+        }
+        for (size_t i = 1; i < nums.size(); ++ i) {
+            if (nums[i] > max_1) {
+                if (!found_2) {
+                    max_2 = max_1;
+                    max_1 = nums[i];
+                    found_2 = true;
+                    continue;
+                }
+                max_3 = max_2;
+                max_2 = max_1;
+                max_1 = nums[i];
+                found_3 = true;
+                continue;
+            }
+            if (nums[i] != max_1) {
+                if (!found_2) {
+                    found_2 = true;
+                    max_2 = nums[i];
+                    continue;
+                }
+                if (nums[i] > max_2) {
+                    max_3 = max_2;
+                    max_2 = nums[i];
+                    found_3 = true;
+                    continue;
+                }
+                if (nums[i] != max_2) {
+                    if (!found_3) {
+                        max_3 = nums[i];
+                        found_3 = true;
+                        continue;
+                    }
+                    if (nums[i] > max_3) {
+                        max_3 = nums[i];
+                    }
+                }
+            }
+        }
+        if (!found_3) {
+            return max_1;
+        }
+        return max_3;
+    }
 };
 
 int main() {
     Solution solution;
-    std::cout << solution.toHex(-15) << std::endl;
+    std::cout << std::endl;
+    auto els = solution.countBits(5);
+    for (const auto &el : els) {
+        std::cout << el << std::endl;
+    }
     return 0;
 }
