@@ -1423,14 +1423,37 @@ class Solution {
         }
         return max_3;
     }
+// 415. Add Strings
+    int CharToInt (char digit) {
+        return static_cast<int>(digit - '0');
+    }
+
+    std::string addStrings(std::string num1, std::string num2) {
+        size_t max_len = std::max(num1.size(), num2.size()), num1_size = num1.size(), num2_size = num2.size();
+        std::string result;
+        int sum_digits = 0;
+        for (size_t i = 0; i < max_len; ++ i) {
+            if (i < num1_size) {
+                sum_digits += CharToInt(num1[num1_size - i - 1]);
+            }
+            if (i < num2_size) {
+                sum_digits += CharToInt(num2[num2_size - i - 1]);
+            }
+            result += std::to_string(sum_digits % 10);
+            sum_digits /= 10;
+        }
+        if (sum_digits > 0) {
+            result += std::to_string(sum_digits % 10);
+        }
+        std::reverse(result.begin(), result.end());
+        return result;
+    }
 };
 
 int main() {
     Solution solution;
     std::cout << std::endl;
-    auto els = solution.countBits(5);
-    for (const auto &el : els) {
-        std::cout << el << std::endl;
-    }
+    std::string n1 = "11", n2 = "123";
+    std::cout << solution.addStrings(n1, n2);
     return 0;
 }
